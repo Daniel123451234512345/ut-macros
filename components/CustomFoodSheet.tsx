@@ -41,7 +41,7 @@ function Form({ initialMeal, onSubmit }: { initialMeal: LogMeal; onSubmit: (f: C
         step="any"
         value={vals[key]}
         onChange={(e) => setVals({ ...vals, [key]: e.target.value })}
-        className="mt-1 h-12 w-full rounded-xl bg-bg px-3 text-lg font-semibold tabular-nums outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
+        className="mt-1 h-12 w-full rounded-2xl bg-bg px-3 text-lg font-semibold tabular-nums outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
         placeholder="0"
       />
     </label>
@@ -63,14 +63,14 @@ function Form({ initialMeal, onSubmit }: { initialMeal: LogMeal; onSubmit: (f: C
         });
       }}
     >
-      <h2 className="text-xl font-bold">Add custom food</h2>
+      <h2 className="font-display text-2xl font-extrabold">Add custom food</h2>
       <label className="block">
         <span className="text-xs font-semibold text-muted">Name</span>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Whey protein shake"
-          className="mt-1 h-12 w-full rounded-xl bg-bg px-3 text-base outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
+          className="mt-1 h-12 w-full rounded-2xl bg-bg px-3 text-base outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
         />
       </label>
       <label className="block">
@@ -79,7 +79,7 @@ function Form({ initialMeal, onSubmit }: { initialMeal: LogMeal; onSubmit: (f: C
           value={portion}
           onChange={(e) => setPortion(e.target.value)}
           placeholder="e.g. 1 scoop"
-          className="mt-1 h-12 w-full rounded-xl bg-bg px-3 text-base outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
+          className="mt-1 h-12 w-full rounded-2xl bg-bg px-3 text-base outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
         />
       </label>
       <p className="pt-1 text-sm font-semibold">Macros per serving</p>
@@ -99,7 +99,7 @@ function Form({ initialMeal, onSubmit }: { initialMeal: LogMeal; onSubmit: (f: C
             step="any"
             value={servings}
             onChange={(e) => setServings(e.target.value)}
-            className="mt-1 h-12 w-full rounded-xl bg-bg px-3 text-lg font-semibold outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
+            className="mt-1 h-12 w-full rounded-2xl bg-bg px-3 text-lg font-semibold outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
           />
         </label>
         <label className="block">
@@ -107,7 +107,7 @@ function Form({ initialMeal, onSubmit }: { initialMeal: LogMeal; onSubmit: (f: C
           <select
             value={meal}
             onChange={(e) => setMeal(e.target.value as LogMeal)}
-            className="mt-1 h-12 w-full rounded-xl bg-bg px-3 text-base font-semibold ring-1 ring-line"
+            className="mt-1 h-12 w-full rounded-2xl bg-bg px-3 text-base font-semibold ring-1 ring-line"
           >
             {LOG_MEALS.map((m) => (
               <option key={m}>{m}</option>
@@ -119,7 +119,7 @@ function Form({ initialMeal, onSubmit }: { initialMeal: LogMeal; onSubmit: (f: C
         <input type="checkbox" checked={save} onChange={(e) => setSave(e.target.checked)} className="h-5 w-5 accent-[var(--accent)]" />
         Save to My Foods for quick re-adding
       </label>
-      <button type="submit" disabled={!valid} className="h-14 w-full rounded-2xl bg-accent text-lg font-bold text-on-accent disabled:opacity-40">
+      <button type="submit" disabled={!valid} className="h-14 w-full rounded-full bg-accent text-lg font-bold text-on-accent disabled:opacity-40">
         Add to {meal}
       </button>
     </form>

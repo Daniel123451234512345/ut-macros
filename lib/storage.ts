@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useSyncExternalStore } from "react";
+import type { ThemePref } from "./theme";
 import type { CustomFood, Favorite, Hall, LogEntry, Macros } from "./types";
 
 /**
@@ -88,6 +89,7 @@ export const useGoals = () => useStored("goals", DEFAULT_GOALS);
 export const useFavorites = () => useStored("favorites", EMPTY_FAVS);
 export const useCustomFoods = () => useStored("customFoods", EMPTY_CUSTOM);
 export const useHall = () => useStored<Hall>("hall", "J2");
+export const useThemePref = () => useStored<ThemePref>("theme", "auto");
 
 export function newId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);

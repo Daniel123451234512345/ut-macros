@@ -4,29 +4,49 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  { href: "/", label: "Menu", icon: "M4 6h16M4 12h16M4 18h10" },
-  { href: "/today", label: "Today", icon: "M12 3v18M3 12h18" },
-  { href: "/history", label: "History", icon: "M4 20V10M10 20V4M16 20v-7M22 20H2" },
-  { href: "/settings", label: "Settings", icon: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM4 12h2m12 0h2M12 4v2m0 12v2" },
+  { href: "/", label: "Menu", icon: <path d="M4 6h16M4 12h16M4 18h10" /> },
+  {
+    href: "/today",
+    label: "Today",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v4l3 2" />
+      </>
+    ),
+  },
+  { href: "/history", label: "History", icon: <path d="M5 20V11M12 20V5M19 20v-6" /> },
+  {
+    href: "/settings",
+    label: "Settings",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
+      </>
+    ),
+  },
 ];
 
+/** Floating charcoal tab bar; the current tab is a burnt-orange pill. */
 export default function BottomTabs() {
   const path = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
-      <ul className="mx-auto grid max-w-xl grid-cols-4">
+    <nav className="fixed inset-x-0 bottom-0 z-30 px-3.5 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+      <ul className="mx-auto grid max-w-xl grid-cols-4 gap-1 rounded-3xl bg-nav p-2 shadow-lg ring-1 ring-black/5 dark:ring-white/10">
         {TABS.map((t) => {
           const active = t.href === "/" ? path === "/" : path.startsWith(t.href);
           return (
             <li key={t.href}>
               <Link
                 href={t.href}
-                className={`flex h-16 flex-col items-center justify-center gap-1 text-xs font-medium ${
-                  active ? "text-accent" : "text-muted"
+                aria-current={active ? "page" : undefined}
+                className={`flex h-13 flex-col items-center justify-center gap-0.5 rounded-2xl text-[11px] ${
+                  active ? "bg-accent font-bold text-on-accent" : "font-medium text-nav-fg"
                 }`}
               >
-                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d={t.icon} />
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  {t.icon}
                 </svg>
                 {t.label}
               </Link>

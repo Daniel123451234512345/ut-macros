@@ -11,7 +11,7 @@ const svg = (size, { maskable = false, rounded = true } = {}) => {
   const o = s * pad;
   const u = inner / 100; // 1% of inner box
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${s} ${s}">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ea580c"/><stop offset="1" stop-color="#c2410c"/></linearGradient></defs>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cc5f0a"/><stop offset="1" stop-color="#bf5700"/></linearGradient></defs>
   <rect width="${s}" height="${s}" rx="${r}" fill="url(#g)"/>
   <g transform="translate(${o} ${o})" fill="#fff">
     <!-- fork -->

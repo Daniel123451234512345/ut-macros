@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import LogList from "@/components/LogList";
-import { MacroLine, Toast } from "@/components/ui";
+import { MacroPills, Toast } from "@/components/ui";
 import { lastNDays, prettyDate } from "@/lib/dates";
 import { useClock } from "@/lib/useClock";
 import { fmtCals, totalOf } from "@/lib/macros";
@@ -34,23 +34,28 @@ function History({ today }: { today: string }) {
   const max = Math.max(goals.cals, ...days.map((d) => d.total.cals), 1);
 
   return (
-    <main className="space-y-5 px-4 pt-5">
+    <main className="space-y-5 px-[18px] pt-6">
       <header>
-        <h1 className="text-2xl font-extrabold tracking-tight">History</h1>
         <p className="text-sm text-muted">Last {DAYS} days</p>
+        <h1 className="font-display text-[32px] font-extrabold leading-tight tracking-tight">History</h1>
       </header>
 
       {avg && (
-        <div className="rounded-3xl bg-card p-5 ring-1 ring-line">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted">
+        <div className="rounded-[26px] bg-accent px-5 py-[18px] text-on-accent">
+          <p className="text-[13px] text-head-soft">
             Daily average · {logged.length} day{logged.length > 1 ? "s" : ""} logged
           </p>
-          <p className="mt-1 text-2xl font-bold tabular-nums">{fmtCals(avg.cals)} cal</p>
-          <MacroLine m={avg} className="text-sm" />
+          <p className="mt-0.5 font-display text-[40px] font-extrabold leading-none tabular-nums">
+            {fmtCals(avg.cals)}
+            <span className="font-sans text-sm font-medium text-head-soft"> cal</span>
+          </p>
+          <div className="mt-3">
+            <MacroPills m={avg} />
+          </div>
         </div>
       )}
 
-      <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-card ring-1 ring-line">
+      <ul className="divide-y divide-line overflow-hidden rounded-[22px] bg-card shadow-[0_1px_0_var(--line)]">
         {days.map((d) => {
           const isOpen = open === d.date;
           const hitProtein = d.total.protein >= goals.protein;
@@ -63,7 +68,7 @@ function History({ today }: { today: string }) {
                 className="w-full px-4 py-3 text-left active:bg-bg disabled:active:bg-transparent"
               >
                 <div className="flex items-baseline justify-between">
-                  <span className="font-semibold">{prettyDate(d.date, today)}</span>
+                  <span className="font-display font-extrabold">{prettyDate(d.date, today)}</span>
                   {d.entries.length ? (
                     <span className="text-sm font-bold tabular-nums">
                       {fmtCals(d.total.cals)} <span className="font-normal text-muted">/ {fmtCals(goals.cals)}</span>
@@ -75,17 +80,17 @@ function History({ today }: { today: string }) {
                 {d.entries.length > 0 && (
                   <>
                     <div className="mt-2 h-2 overflow-hidden rounded-full bg-bg">
-                      <div className="h-full rounded-full bg-kcal" style={{ width: `${(d.total.cals / max) * 100}%` }} />
+                      <div className="h-full rounded-full bg-accent" style={{ width: `${(d.total.cals / max) * 100}%` }} />
                     </div>
-                    <div className="mt-1.5 flex justify-between text-xs">
-                      <MacroLine m={d.total} />
-                      {hitProtein && <span className="font-semibold text-prot">Protein goal ✓</span>}
+                    <div className="mt-2 flex items-center justify-between gap-2">
+                      <MacroPills m={d.total} />
+                      {hitProtein && <span className="text-xs font-bold text-prot">Protein goal ✓</span>}
                     </div>
                   </>
                 )}
               </button>
               {isOpen && (
-                <div className="bg-bg/60 px-3 pb-4 pt-1">
+                <div className="bg-bg px-3 pb-4 pt-3">
                   <LogList entries={d.entries} onUpdate={(id, p) => updateEntry(d.date, id, p)} onDelete={(id) => deleteEntry(d.date, id)} />
                 </div>
               )}

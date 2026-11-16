@@ -6,7 +6,7 @@ import CustomFoodSheet from "@/components/CustomFoodSheet";
 import ItemSheet, { type SheetFood } from "@/components/ItemSheet";
 import LogList from "@/components/LogList";
 import MacroBars from "@/components/MacroBars";
-import { Toast } from "@/components/ui";
+import { SectionTitle, Toast } from "@/components/ui";
 import { keyToDate } from "@/lib/dates";
 import { useClock } from "@/lib/useClock";
 import { fmtCals, totalOf } from "@/lib/macros";
@@ -38,13 +38,13 @@ function Today({ today, meal }: { today: string; meal: Meal }) {
   ];
 
   return (
-    <main className="space-y-5 px-4 pt-5">
+    <main className="space-y-5 px-[18px] pt-6">
       <header className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Today</h1>
-          <p className="text-sm text-muted">{keyToDate(today).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" })}</p>
+          <p className="text-sm text-muted">{keyToDate(today).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" })}</p>
+          <h1 className="font-display text-[32px] font-extrabold leading-tight tracking-tight">Today</h1>
         </div>
-        <button type="button" onClick={() => setCustomOpen(true)} className="h-11 rounded-2xl bg-accent px-4 text-sm font-bold text-on-accent">
+        <button type="button" onClick={() => setCustomOpen(true)} className="mb-1 h-10 rounded-full bg-accent px-4 text-sm font-bold text-on-accent">
           + Custom food
         </button>
       </header>
@@ -53,21 +53,21 @@ function Today({ today, meal }: { today: string; meal: Meal }) {
 
       {quickItems.length > 0 && (
         <section>
-          <h2 className="px-1 pb-1.5 text-xs font-bold uppercase tracking-wider text-muted">Quick add</h2>
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+          <SectionTitle>Quick add</SectionTitle>
+          <div className="-mx-[18px] flex gap-2 overflow-x-auto px-[18px] pb-1">
             {quickItems.map((q) => (
               <button
                 key={q.key}
                 type="button"
                 onClick={() => setQuick(q)}
-                className="shrink-0 rounded-2xl bg-card px-3.5 py-2 text-left ring-1 ring-line active:bg-bg"
+                className="shrink-0 rounded-[18px] bg-card px-3.5 py-2.5 text-left shadow-[0_1px_0_var(--line)] active:scale-[0.98]"
               >
                 <div className="max-w-40 truncate text-sm font-semibold">
                   {q.key.startsWith("f") ? "★ " : ""}
                   {q.name}
                 </div>
-                <div className="text-xs text-muted">
-                  {fmtCals(q.per.cals)} cal · {Math.round(q.per.protein)}g P
+                <div className="mt-0.5 text-xs text-muted">
+                  {fmtCals(q.per.cals)} cal · <span className="font-semibold text-prot">{Math.round(q.per.protein)}g P</span>
                 </div>
               </button>
             ))}
@@ -76,11 +76,11 @@ function Today({ today, meal }: { today: string; meal: Meal }) {
       )}
 
       {ready && entries.length === 0 ? (
-        <div className="rounded-2xl bg-card px-5 py-8 text-center ring-1 ring-line">
-          <p className="font-bold">Nothing logged yet today</p>
+        <div className="rounded-[22px] bg-card px-5 py-8 text-center shadow-[0_1px_0_var(--line)]">
+          <p className="font-display text-lg font-extrabold">Nothing logged yet today</p>
           <p className="mt-1 text-sm text-muted">
             Pick something from the{" "}
-            <Link href="/" className="font-semibold text-accent underline">
+            <Link href="/" className="font-semibold text-ink underline">
               menu
             </Link>{" "}
             or add a custom food.

@@ -45,7 +45,7 @@ function Body({ food, mode = "add", initialServings = 1, initialMeal, showMealPi
     <div className="space-y-5">
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <h2 className="text-xl font-bold leading-tight">{food.name}</h2>
+          <h2 className="font-display text-2xl font-extrabold leading-tight">{food.name}</h2>
           <p className="mt-1 text-sm text-muted">
             1 serving = <span className="font-semibold text-fg">{food.portion}</span>
             {food.hall && <> · {food.hall}</>}
@@ -57,7 +57,7 @@ function Body({ food, mode = "add", initialServings = 1, initialMeal, showMealPi
             type="button"
             onClick={favorite.toggle}
             aria-label={favorite.on ? "Remove from favorites" : "Add to favorites"}
-            className={`-mr-1 grid h-12 w-12 place-items-center rounded-full ${favorite.on ? "text-amber-500" : "text-muted"}`}
+            className={`-mr-1 grid h-12 w-12 place-items-center rounded-full ${favorite.on ? "text-ink" : "text-muted"}`}
           >
             <StarIcon filled={favorite.on} className="h-7 w-7" />
           </button>
@@ -83,7 +83,8 @@ function Body({ food, mode = "add", initialServings = 1, initialMeal, showMealPi
               key={x}
               type="button"
               onClick={() => setMeal(x)}
-              className={`h-9 flex-1 rounded-full text-xs font-semibold ring-1 ${meal === x ? "bg-accent-soft text-accent ring-accent" : "text-muted ring-line"}`}
+              aria-pressed={meal === x}
+              className={`h-10 flex-1 rounded-full text-xs ${meal === x ? "bg-fg font-bold text-bg" : "font-semibold text-muted ring-1 ring-line"}`}
             >
               {x}
             </button>
@@ -93,14 +94,14 @@ function Body({ food, mode = "add", initialServings = 1, initialMeal, showMealPi
 
       <div className="flex gap-3">
         {onDelete && (
-          <button type="button" onClick={onDelete} className="h-14 rounded-2xl px-5 font-semibold text-red-600 ring-1 ring-line">
+          <button type="button" onClick={onDelete} className="h-14 rounded-full px-5 font-semibold text-red-600 ring-1 ring-line dark:text-red-400">
             Delete
           </button>
         )}
         <button
           type="button"
           onClick={() => onConfirm(servings, meal)}
-          className="h-14 flex-1 rounded-2xl bg-accent text-lg font-bold text-on-accent active:scale-[0.98]"
+          className="h-14 flex-1 rounded-full bg-accent text-lg font-bold text-on-accent active:scale-[0.98]"
         >
           {mode === "edit" ? "Save" : `Add to ${meal}`}
         </button>
@@ -110,9 +111,9 @@ function Body({ food, mode = "add", initialServings = 1, initialMeal, showMealPi
 }
 
 const TAG_STYLE: Record<string, string> = {
-  VGN: "bg-green-600/15 text-green-700 dark:text-green-400",
-  VGT: "bg-lime-600/15 text-lime-700 dark:text-lime-400",
-  HAL: "bg-sky-600/15 text-sky-700 dark:text-sky-400",
+  VGN: "bg-fat-bg text-fat",
+  VGT: "bg-fat-bg text-fat",
+  HAL: "bg-prot-bg text-prot",
 };
 /** Only diet tags get chips in lists; allergens show in the sheet. */
 export const DIET_CODES = ["VGN", "VGT", "HAL"];
@@ -126,7 +127,7 @@ export function DietTags({ codes, labels, className = "", dietOnly = false }: { 
         <span
           key={c}
           title={labels?.[c] ?? c}
-          className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${TAG_STYLE[c] ?? "bg-bg text-muted"}`}
+          className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${TAG_STYLE[c] ?? "bg-bg text-muted"}`}
         >
           {dietOnly ? c : (labels?.[c] ?? c)}
         </span>

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import ItemSheet, { DietTags } from "@/components/ItemSheet";
-import { MacroLine, Segmented, StarIcon, Toast } from "@/components/ui";
+import { MacroPills, SectionTitle, StarIcon, Toast } from "@/components/ui";
+import { fmtCals } from "@/lib/macros";
 import { prettyDate } from "@/lib/dates";
 import { useClock } from "@/lib/useClock";
 import { useFavorites, useHall } from "@/lib/storage";
@@ -14,7 +15,7 @@ import { HALLS, MEALS, type Item, type Meal } from "@/lib/types";
 export default function MenuPage() {
   const clock = useClock();
   return clock ? <Menu today={clock.today} nowMeal={clock.meal} /> : (
-    <main className="px-4">
+    <main className="px-[18px]">
       <Skeleton />
     </main>
   );
@@ -67,108 +68,143 @@ function Menu({ today, nowMeal }: { today: string; nowMeal: Meal }) {
         : [...prev, { itemId: it.id, name: it.name, portion: it.portion, per: it.m }],
     );
 
-  return (
-    <main className="px-4">
-      <header className="flex items-baseline justify-between pb-3 pt-5">
-        <h1 className="text-2xl font-extrabold tracking-tight">
-          Longhorn Macros <span className="align-middle text-xs font-semibold text-muted">(unofficial)</span>
-        </h1>
-      </header>
+  const greeting = nowMeal === "Breakfast" ? "Good morning" : nowMeal === "Lunch" ? "Good afternoon" : "Good evening";
 
-      <div className="sticky top-0 z-20 -mx-4 space-y-2 bg-bg/95 px-4 pb-3 pt-1 backdrop-blur">
-        <Segmented options={HALLS} value={hall} onChange={setHall} />
-        <Segmented
-          options={MEALS}
-          value={meal ?? preferred}
-          onChange={setPickedMeal}
-          disabled={MEALS.filter((m) => !available.includes(m))}
-        />
-        <div className="flex gap-2">
-          <input
-            type="search"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search this menu"
-            className="h-11 min-w-0 flex-1 rounded-2xl bg-card px-4 text-base ring-1 ring-line outline-none focus:ring-2 focus:ring-accent"
-          />
+  return (
+    <main>
+      <header className="rounded-b-[28px] bg-accent px-[18px] pb-4 pt-6 text-on-accent">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-sm text-head-soft">{greeting}</p>
+            <h1 className="font-display text-[32px] font-extrabold leading-[1.1] tracking-tight">
+              {meal ? `What\u2019s for ${meal.toLowerCase()}?` : "What\u2019s cooking?"}
+            </h1>
+          </div>
           {dates.length > 1 && date && (
             <select
               value={date}
               onChange={(e) => setPickedDate(e.target.value)}
               aria-label="Menu date"
-              className="h-11 rounded-2xl bg-card px-3 text-sm font-semibold ring-1 ring-line"
+              className="mb-1 h-9 shrink-0 rounded-full bg-white/15 px-3 text-sm font-semibold text-white outline-none ring-1 ring-head-line"
             >
               {dates.map((d) => (
-                <option key={d} value={d}>
+                <option key={d} value={d} className="text-black">
                   {prettyDate(d, today)}
                 </option>
               ))}
             </select>
           )}
         </div>
+        <div className="mt-3.5 grid grid-cols-3 gap-2" role="group" aria-label="Dining hall">
+          {HALLS.map((h) => (
+            <button
+              key={h}
+              type="button"
+              onClick={() => setHall(h)}
+              aria-pressed={hall === h}
+              className={`h-[52px] rounded-[18px] font-display text-lg ${
+                hall === h ? "bg-white font-extrabold text-accent" : "font-semibold text-white ring-[1.5px] ring-head-line ring-inset"
+              }`}
+            >
+              {h}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      <div className="sticky top-0 z-20 space-y-2.5 bg-bg/95 px-[18px] pb-3 pt-3.5 backdrop-blur">
+        <div className="flex gap-1.5" role="group" aria-label="Meal">
+          {MEALS.map((m) => {
+            const isOn = (meal ?? preferred) === m;
+            return (
+              <button
+                key={m}
+                type="button"
+                disabled={!available.includes(m)}
+                onClick={() => setPickedMeal(m)}
+                aria-pressed={isOn}
+                className={`h-9 rounded-full px-4 text-sm disabled:opacity-35 ${isOn ? "bg-fg font-bold text-bg" : "font-semibold text-muted"}`}
+              >
+                {m}
+              </button>
+            );
+          })}
+        </div>
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={`Search ${hall}${meal ? ` ${meal.toLowerCase()}` : ""}`}
+          aria-label="Search this menu"
+          className="h-11 w-full rounded-2xl bg-card px-4 text-base shadow-[0_1px_0_var(--line)] outline-none ring-1 ring-line focus:ring-2 focus:ring-accent"
+        />
       </div>
 
-      {state.status === "stale" && (
-        <Banner>
-          Couldn&apos;t reach UT&apos;s menu right now, so this is the last copy saved on your phone (updated {menu?.lastCached}).
-        </Banner>
-      )}
-      {date && date !== today && <Banner>Showing the menu for {prettyDate(date, today)}. Anything you add still goes in today&apos;s log.</Banner>}
+      <div className="px-[18px]">
+        {state.status === "stale" && (
+          <Banner>
+            Couldn&apos;t reach UT&apos;s menu right now, so this is the last copy saved on your phone (updated {menu?.lastCached}).
+          </Banner>
+        )}
+        {date && date !== today && <Banner>Showing the menu for {prettyDate(date, today)}. Anything you add still goes in today&apos;s log.</Banner>}
 
-      {state.status === "loading" && <Skeleton />}
+        {state.status === "loading" && <Skeleton />}
 
-      {state.status === "error" && (
-        <Empty title="Menu unavailable">
-          We couldn&apos;t load UT&apos;s dining menu ({state.error}). You can still{" "}
-          <Link href="/today" className="font-semibold text-accent underline">
-            log custom foods and favorites
-          </Link>
-          .
-        </Empty>
-      )}
+        {state.status === "error" && (
+          <Empty title="Menu unavailable">
+            We couldn&apos;t load UT&apos;s dining menu ({state.error}). You can still{" "}
+            <Link href="/today" className="font-semibold text-ink underline">
+              log custom foods and favorites
+            </Link>
+            .
+          </Empty>
+        )}
 
-      {todayMissing && (
-        <Empty title="Today isn't on the menu yet">
-          UT&apos;s published menu covers {menu?.dates[0]} to {menu?.dates.at(-1)}. You can still{" "}
-          <Link href="/today" className="font-semibold text-accent underline">
-            log custom foods and favorites
-          </Link>
-          .
-        </Empty>
-      )}
+        {todayMissing && (
+          <Empty title="Today isn't on the menu yet">
+            UT&apos;s published menu covers {menu?.dates[0]} to {menu?.dates.at(-1)}. You can still{" "}
+            <Link href="/today" className="font-semibold text-ink underline">
+              log custom foods and favorites
+            </Link>
+            .
+          </Empty>
+        )}
 
-      {menu && date && !meal && (
-        <Empty title={`${hall} isn't serving ${prettyDate(date, today) === "Today" ? "today" : "that day"}`}>Try another dining hall.</Empty>
-      )}
+        {menu && date && !meal && (
+          <Empty title={`${hall} isn't serving ${prettyDate(date, today) === "Today" ? "today" : "that day"}`}>Try another dining hall.</Empty>
+        )}
 
-      {menu && meal && query && visible.length === 0 && <Empty title="No matches">Nothing at {hall} {meal.toLowerCase()} matches “{q}”.</Empty>}
+        {menu && meal && query && visible.length === 0 && <Empty title="No matches">Nothing at {hall} {meal.toLowerCase()} matches “{q}”.</Empty>}
 
-      <div className="space-y-5 pt-2">
-        {visible.map((s) => (
-          <section key={s.station}>
-            <h2 className="px-1 pb-1.5 text-xs font-bold uppercase tracking-wider text-muted">{s.station}</h2>
-            <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-card ring-1 ring-line">
-              {s.items.map((it) => (
-                <li key={it.id}>
-                  <button type="button" onClick={() => setOpen(it)} className="flex w-full items-center gap-3 px-4 py-3 text-left active:bg-bg">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-semibold leading-snug">{it.name}</span>
-                        {favIds.has(it.id) && <StarIcon filled className="h-3.5 w-3.5 shrink-0 text-amber-500" />}
-                      </div>
-                      <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-                        <span className="text-muted">{it.portion}</span>
-                        <MacroLine m={it.m} />
-                        <DietTags codes={it.legends} labels={menu?.legends} dietOnly />
-                      </div>
-                    </div>
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-soft text-xl font-bold text-accent">+</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        <div className="space-y-5 pt-1">
+          {visible.map((s) => (
+            <section key={s.station}>
+              <SectionTitle>{s.station}</SectionTitle>
+              <ul className="grid grid-cols-2 gap-2.5">
+                {s.items.map((it) => (
+                  <li key={it.id} className="flex">
+                    <button
+                      type="button"
+                      onClick={() => setOpen(it)}
+                      className="flex w-full flex-col gap-2 rounded-[22px] bg-card p-3.5 text-left shadow-[0_1px_0_var(--line)] active:scale-[0.98]"
+                    >
+                      <span className="flex items-start gap-1">
+                        <span className="min-h-[2.5rem] flex-1 text-[15px] font-bold leading-tight">{it.name}</span>
+                        {favIds.has(it.id) && <StarIcon filled className="mt-0.5 h-4 w-4 shrink-0 text-ink" />}
+                      </span>
+                      <span className="mt-auto font-display text-[26px] font-extrabold leading-none text-ink tabular-nums">
+                        {fmtCals(it.m.cals)}
+                        <span className="font-sans text-xs font-medium text-muted"> cal · {it.portion}</span>
+                      </span>
+                      <MacroPills m={it.m} />
+                      <DietTags codes={it.legends} labels={menu?.legends} dietOnly />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
       </div>
 
       <ItemSheet
@@ -190,13 +226,13 @@ function Menu({ today, nowMeal }: { today: string; nowMeal: Meal }) {
 }
 
 function Banner({ children }: { children: React.ReactNode }) {
-  return <p className="mt-2 rounded-2xl bg-accent-soft px-4 py-3 text-sm text-fg">{children}</p>;
+  return <p className="mb-3 rounded-[18px] bg-accent-soft px-4 py-3 text-sm text-fg">{children}</p>;
 }
 
 function Empty({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mt-6 rounded-2xl bg-card px-5 py-8 text-center ring-1 ring-line">
-      <p className="font-bold">{title}</p>
+    <div className="mt-4 rounded-[22px] bg-card px-5 py-8 text-center shadow-[0_1px_0_var(--line)]">
+      <p className="font-display text-lg font-extrabold">{title}</p>
       <p className="mt-1 text-sm text-muted">{children}</p>
     </div>
   );
@@ -204,9 +240,9 @@ function Empty({ title, children }: { title: string; children: React.ReactNode }
 
 function Skeleton() {
   return (
-    <div className="space-y-2 pt-4" aria-label="Loading">
-      {Array.from({ length: 8 }, (_, i) => (
-        <div key={i} className="h-16 animate-pulse rounded-2xl bg-card ring-1 ring-line" />
+    <div className="grid grid-cols-2 gap-2.5 pt-4" aria-label="Loading">
+      {Array.from({ length: 6 }, (_, i) => (
+        <div key={i} className="h-36 animate-pulse rounded-[22px] bg-card" />
       ))}
     </div>
   );
