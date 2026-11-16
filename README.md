@@ -32,7 +32,26 @@ npm run build     # production build
 npm run icons     # regenerate app icons from scripts/make-icons.mjs
 ```
 
-## Deploy free on Vercel
+## Just want to use it?
+
+You don't need to deploy anything. Open the app's link on your phone and add it to your home screen (steps below). Your log stays on your own phone.
+
+## Run your own copy
+
+No API keys or environment variables are needed, so a copy works as soon as it's deployed.
+
+**One click:** [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDaniel123451234512345%2Fut-macros&project-name=ut-macros&repository-name=ut-macros)
+
+This copies the repo to your GitHub account and deploys it to your Vercel account (both free).
+
+**Or fork it:**
+
+1. Click **Fork** at the top of this repo on GitHub.
+2. On vercel.com, sign in with GitHub, click **Add New… → Project**, pick your fork, and click **Deploy**.
+
+Every push to your fork redeploys it.
+
+## Deploy from scratch (the original setup)
 
 1. **Make a GitHub repo.** On github.com, click **New repository**, name it `ut-macros`, and leave it empty (no README or .gitignore).
 2. **Push this folder** (it's already a git repo):
