@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Longhorn Macros (unofficial)
 
-## Getting Started
+A free macro tracker for UT Austin dining halls (J2, Kins, JCL). Pick a hall, tap what you ate, set servings, and the app totals calories, protein, carbs and fat against your goals.
 
-First, run the development server:
+It's an unofficial student project: not affiliated with or endorsed by UT Austin. Nutrition data comes from UT Housing & Dining's public menu.
+
+## How it works
+
+- `app/api/menu/route.ts` fetches UT's menu on the server, cuts it from about 2 MB down to 260 KB (`lib/slim.ts`), and caches it for 6 hours. Students' phones only ever talk to this app, never to UT's server.
+- Everything personal (log, goals, favorites, custom foods) is stored in `localStorage` on each person's own phone. There's no database and no accounts.
+- Each log entry saves a copy of its macros, so past days stay correct after the menu changes.
+- Dates and the auto-picked meal use Austin time: Breakfast before 10:30, Lunch before 4:00 pm, Dinner after that.
+
+## Run it locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev -- -H 0.0.0.0
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**On your phone (same Wi-Fi):** find your Mac's IP with `ipconfig getifaddr en0` (for example `192.168.48.121`), then open `http://192.168.48.121:3000` in Safari on your iPhone. If macOS asks whether to allow incoming connections for `node`, click **Allow**. UT and campus Wi-Fi often block phone-to-laptop connections, so this works best on home Wi-Fi or your phone's hotspot.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> The local version runs over plain `http`, so "Add to Home Screen" there is only a preview. Install the real one from the Vercel URL below.
 
-## Learn More
+Other commands:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm test          # unit tests (menu slimming, macro math, Austin dates)
+npm run build     # production build
+npm run icons     # regenerate app icons from scripts/make-icons.mjs
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy free on Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Make a GitHub repo.** On github.com, click **New repository**, name it `ut-macros`, and leave it empty (no README or .gitignore).
+2. **Push this folder** (it's already a git repo):
+   ```bash
+   git add -A
+   git commit -m "Longhorn Macros first version"
+   git branch -M main
+   git remote add origin https://github.com/<your-username>/ut-macros.git
+   git push -u origin main
+   ```
+3. **Import into Vercel.** Go to vercel.com, sign up with GitHub, click **Add New… → Project**, pick `ut-macros`, and click **Deploy**. No settings or environment variables are needed, since Vercel detects Next.js on its own.
+4. After a minute you get a URL like `https://ut-macros-xyz.vercel.app`. Every `git push` to `main` redeploys automatically.
 
-## Deploy on Vercel
+(Optional) In Vercel's **Settings → Domains** you can rename it to something like `longhorn-macros.vercel.app` if that name is free.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Add it to your iPhone home screen
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Open your Vercel URL in **Safari**. It has to be Safari, not the Chrome or Instagram in-app browser.
+2. Tap the **Share** button (square with an arrow), scroll down, and tap **Add to Home Screen**.
+3. Make sure **Open as Web App** is on, then tap **Add**.
+
+It now opens full-screen like a normal app, with the bottom tabs.
+
+Note: the home-screen app has its own storage, separate from Safari tabs. Log from the home-screen icon so your history stays in one place.
+
+## Project layout
+
+```
+app/
+  page.tsx            Menu (hall + meal picker, search, stations)
+  today/page.tsx      Progress bars, quick add, today's log
+  history/page.tsx    Last 14 days
+  settings/page.tsx   Goals, favorites, my foods, clear data
+  api/menu/route.ts   Server fetch + 6h cache of UT's menu
+  manifest.ts         PWA manifest
+components/           ItemSheet, CustomFoodSheet, LogList, MacroBars, BottomTabs, ui
+lib/
+  slim.ts             UT JSON → small menu (tested)
+  macros.ts           servings math + rounding (tested)
+  dates.ts            Austin date keys "MM/DD/YYYY", meal by time (tested)
+  storage.ts          localStorage hooks
+  useMenu.ts          loads /api/menu, falls back to the last saved copy
+```
+
+To test the "menu unavailable" screen, run the app with a broken source URL: `UT_MENU_URL=https://example.invalid npm run dev`.

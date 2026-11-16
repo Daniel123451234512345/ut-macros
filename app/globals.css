@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --bg: #f6f4f1;
+  --card: #ffffff;
+  --fg: #1c1917;
+  --muted: #78716c;
+  --line: #e7e5e4;
+  --accent: #c2410c;
+  --accent-soft: #fff1e8;
+  --on-accent: #ffffff;
+  --p: #2563eb; /* protein */
+  --c: #d97706; /* carbs */
+  --f: #9333ea; /* fat */
+  --k: #c2410c; /* calories */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #12100e;
+    --card: #1e1b18;
+    --fg: #f5f5f4;
+    --muted: #a8a29e;
+    --line: #34302c;
+    --accent: #fb923c;
+    --accent-soft: #3a2416;
+    --on-accent: #1c1917;
+    --p: #60a5fa;
+    --c: #fbbf24;
+    --f: #c084fc;
+    --k: #fb923c;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-prot: var(--p);
+  --color-carb: var(--c);
+  --color-fat: var(--f);
+  --color-kcal: var(--k);
+  --font-sans: var(--font-geist-sans);
 }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  overscroll-behavior-y: none;
+}
+
+/* number inputs: hide spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.sheet-up { animation: sheet-up 180ms ease-out; }
